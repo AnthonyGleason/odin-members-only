@@ -18,9 +18,22 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+//setup passport
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+
+//express session setup
+const session = require('express-session');
+require('dotenv').config();
+
+app.use(session({
+  secret: process.env.SECRET,
+  resave: false,
+  saveUninitialized: false
+}));
 app.use('/', indexRouter);
 //setup mongoose
-require('dotenv').config();
+
 const mongoose= require('mongoose');
 mongoose.connect(process.env.DATABASE_URL, console.log('connected'));
 
