@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -18,23 +20,43 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-//setup passport
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-
-//express session setup
+//setup express session
 const session = require('express-session');
-require('dotenv').config();
-
 app.use(session({
   secret: process.env.SECRET,
   resave: false,
-  saveUninitialized: false
-}));
-app.use('/', indexRouter);
-//setup mongoose
+  saveUninitialized: false,
+}))
 
+//setup passport
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(async (user,pass,done)=>{
+  const userObj = await getUser(user);
+  if (!userObj) return done(null,false,{message: 'incorrect username'});
+  return done(null,userObj);
+  //store sessions in a seperate doc
+}));
+
+passport.serializeUser((user,done)=>{
+  /* gets return value from local strategy done function (which in this case is the user object)
+  sets document id as the serialized id */
+  done(null,user._id);
+});
+
+passport.deserializeUser(async (id,done)=>{
+  const userObj = await getUserByDocID(id);
+  return done(null,userObj);
+});
+
+//routers
+app.use('/', indexRouter);
+
+//setup mongoose
 const mongoose= require('mongoose');
+const { getUser, getUserByDocID } = require('./controllers/User');
 mongoose.connect(process.env.DATABASE_URL, console.log('connected'));
 
 // catch 404 and forward to error handler

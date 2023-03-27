@@ -17,6 +17,11 @@ let getUser = async function(userName){
   const user = await UserModel.findOne({userName: userName});
   return user;
 };
+//get user by document id
+let getUserByDocID = async function(docID){
+  const user = await UserModel.findById(docID);
+  return user;
+}
 //get all users
 let getAllUsers = async function(){
   const allUsers = await UserModel.find({});
@@ -38,4 +43,4 @@ let deleteUser = async function(userName){
   await UserModel.deleteOne({userName: userName});
 };
 
-module.exports = {createUser,getUser,getAllUsers,updateUser,deleteUser};
+module.exports = {createUser,getUser,getAllUsers,updateUser,deleteUser,getUserByDocID};
