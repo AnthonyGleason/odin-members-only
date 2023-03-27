@@ -5,9 +5,19 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
+    <ul>
+      <div>Messages</div>
+      <% for (let message of messages) { %>
+        <li>Message Title: <%=message.title %></li>
+        <li>Message Text: <%=message.text %></li>
+        <li>Message Date: <%=message.timestamp %></li>
+        <li>Message Author: <%=message.createdBy %></li>
+      <% } %>
+    </ul>
     <form method="POST" action="/logout">
       <button type="submit">Logout</button>
     </form>
-    <a href="/signup">Signup</a>
+    <a href="/newmessage">Create a message</a>
+    <a href="/jointheclub">Join The Club!</a>
   </body>
 </html>

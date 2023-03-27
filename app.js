@@ -27,17 +27,25 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
 }))
-
+//setup bcrypt
+const bcrypt = require('bcrypt');
 //setup passport
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(async (user,pass,done)=>{
+  //get user object from mongodb
   const userObj = await getUser(user);
+  //check for incorrect username
   if (!userObj) return done(null,false,{message: 'incorrect username'});
-  return done(null,userObj);
-  //store sessions in a seperate doc
+  //compares password input to hashed password in mongodb
+  const passwordsMatch = await bcrypt.compare(pass,userObj.password);
+  if (passwordsMatch){
+    return done(null,userObj);
+  }else{
+    return done(null,false,{message: 'passwords do not match'});
+  }
 }));
 
 passport.serializeUser((user,done)=>{
@@ -47,6 +55,7 @@ passport.serializeUser((user,done)=>{
 });
 
 passport.deserializeUser(async (id,done)=>{
+  //gets the user object from mongodb by docID
   const userObj = await getUserByDocID(id);
   return done(null,userObj);
 });

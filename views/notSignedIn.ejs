@@ -5,6 +5,15 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
+    <ul>
+      <div>Messages</div>
+      <% for (let message of messages) { %>
+        <li>Message Title: <%=message.title %></li>
+        <li>Message Text: <%=message.text %></li>
+        <li>Message Date: Must be a member to view.</li>
+        <li>Message Author: Must be a member to view.</li>
+      <% } %>
+    </ul>
     <a href="/login">Login</a>
     <a href="/signup">Signup</a>
   </body>
