@@ -12,6 +12,10 @@
         <li>Message Text: <%=message.text %></li>
         <li>Message Date: <%=message.timestamp %></li>
         <li>Message Author: <%=message.createdBy %></li>
+        <form method="POST" action="/deletemessage">
+          <input type="hidden" name='messageID' value="<%= message._id %>" />
+          <button type="submit">Delete Message</button>
+        </form>
       <% } %>
     </ul>
     <form method="POST" action="/logout">

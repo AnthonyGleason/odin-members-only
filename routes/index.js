@@ -3,13 +3,12 @@ const bcrypt = require('bcrypt');
 const passport = require('passport');
 var router = express.Router();
 const {createUser,getUser,getAllUsers,updateUser,deleteUser,getUserByDocID} = require('../controllers/User');
-const { createMessage, getAllMessages } = require('../controllers/Message');
+const { createMessage, getAllMessages, deleteMessage } = require('../controllers/Message');
 
 /* GET home page. */
 router.get('/', async function(req, res, next) {
   //get all messages
   const messages = await getAllMessages();
-  console.log(messages);
   //check if user is authenticated and render message route
   if (req.isAuthenticated()){
     res.render('signedIn', {messages: messages});
@@ -100,6 +99,13 @@ router.post('/newmessage',async (req,res,next)=>{
     req.body.text,//message content
     req.user.userName//created by
   )
+  res.redirect('/');
+});
+
+//delete message
+router.post('/deletemessage',async(req,res,next)=>{
+  if (!req.user.admin) return res.status(400).json({err: 'user is not an admin'});
+  await deleteMessage(req.body.messageID);
   res.redirect('/');
 });
 //export router

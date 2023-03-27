@@ -32,8 +32,8 @@ let updateMessage = async function(oldMessage,updatedMessageInput){
   return updatedMessage;
 };
 //delete message
-let deleteMessage = async function(message){
-  await MessageModel.deleteOne(message)
+let deleteMessage = async function(messageID){
+  await MessageModel.findByIdAndDelete(messageID);
 };
 
 module.exports = {createMessage,getMessage,getAllMessages,updateMessage,deleteMessage};
